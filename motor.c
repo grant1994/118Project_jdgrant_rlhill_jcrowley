@@ -18,8 +18,8 @@
 //#define DEBUG
 #define PWM_LEFT_MOTOR  PWM_PORTY10
 #define PWM_RIGHT_MOTOR PWM_PORTY12
-#define DIR_LEFT_MOTOR  PIN4 
-#define DIR_RIGHT_MOTOR PIN5
+#define DIR_LEFT_MOTOR  PIN10 
+#define DIR_RIGHT_MOTOR PIN11
 
 void motorInit()
 {
