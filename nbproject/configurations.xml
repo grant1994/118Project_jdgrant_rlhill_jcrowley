@@ -26,6 +26,8 @@
       <itemPath>SyncSampling.h</itemPath>
       <itemPath>C:/CMPE118/include/IO_Ports.h</itemPath>
       <itemPath>C:/CMPE118/include/LED.h</itemPath>
+      <itemPath>motor.h</itemPath>
+      <itemPath>sensors.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -51,6 +53,8 @@
       <itemPath>SyncSampling.c</itemPath>
       <itemPath>C:/CMPE118/src/IO_Ports.c</itemPath>
       <itemPath>C:/CMPE118/src/LED.c</itemPath>
+      <itemPath>motor.c</itemPath>
+      <itemPath>sensors.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
