@@ -23,11 +23,11 @@
       <itemPath>C:/CMPE118/include/ES_TattleTale.h</itemPath>
       <itemPath>C:/CMPE118/include/ES_Timers.h</itemPath>
       <itemPath>ES_Configure.h</itemPath>
-      <itemPath>SyncSampling.h</itemPath>
       <itemPath>C:/CMPE118/include/IO_Ports.h</itemPath>
       <itemPath>C:/CMPE118/include/LED.h</itemPath>
-      <itemPath>motor.h</itemPath>
-      <itemPath>sensors.h</itemPath>
+      <itemPath>Drivers/inc/motor.h</itemPath>
+      <itemPath>Drivers/inc/sensors.h</itemPath>
+      <itemPath>Services/inc/SyncSampling.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -50,11 +50,11 @@
       <itemPath>C:/CMPE118/src/ES_TattleTale.c</itemPath>
       <itemPath>C:/CMPE118/src/ES_Timers.c</itemPath>
       <itemPath>C:/CMPE118/templates/TemplateES_Main.c</itemPath>
-      <itemPath>SyncSampling.c</itemPath>
       <itemPath>C:/CMPE118/src/IO_Ports.c</itemPath>
       <itemPath>C:/CMPE118/src/LED.c</itemPath>
-      <itemPath>motor.c</itemPath>
-      <itemPath>sensors.c</itemPath>
+      <itemPath>Drivers/src/motor.c</itemPath>
+      <itemPath>Drivers/src/sensors.c</itemPath>
+      <itemPath>Services/src/SyncSampling.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -110,7 +110,8 @@
         <property key="enable-symbols" value="true"/>
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
-        <property key="extra-include-directories" value=".;C:\CMPE118\include"/>
+        <property key="extra-include-directories"
+                  value="Drivers\inc;C:\CMPE118\include;Services\inc;EventCheckers\inc;."/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
