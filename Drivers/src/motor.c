@@ -18,12 +18,12 @@
 //#define DEBUG
 #define PWM_LEFT_MOTOR  PWM_PORTY10
 #define PWM_RIGHT_MOTOR PWM_PORTY12
-#define DIR_LEFT_MOTOR  PIN11 
-#define DIR_RIGHT_MOTOR PIN12
+#define DIR_LEFT_MOTOR  PIN9 
+#define DIR_RIGHT_MOTOR PIN11
 
 void motorInit()
 {
-    IO_PortsSetPortOutputs(PORTZ, DIR_LEFT_MOTOR|DIR_RIGHT_MOTOR);
+    IO_PortsSetPortOutputs(PORTY, DIR_LEFT_MOTOR|DIR_RIGHT_MOTOR);
     PWM_AddPins(PWM_LEFT_MOTOR|PWM_RIGHT_MOTOR);
 }
 
@@ -64,11 +64,11 @@ void motorForward(int lr)
 	// sets IN0 = 0, IN1 = 1
 	if (lr) 
 	{
-        IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | DIR_RIGHT_MOTOR); // Set Dir right motor = high (forward)
+        IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) | DIR_RIGHT_MOTOR); // Set Dir right motor = high (forward)
 	}
 	else
 	{   
-        IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | DIR_LEFT_MOTOR); // Set Dir left motor = high (forward)
+        IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) | DIR_LEFT_MOTOR); // Set Dir left motor = high (forward)
 	}
 	return;
 }
@@ -82,11 +82,11 @@ void motorBackward(int lr)
 	// sets IN0 = 0, IN1 = 1
 	if (lr) 
 	{
-		IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) & ~DIR_RIGHT_MOTOR); // Set Dir right motor = low (backward)
+		IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) & ~DIR_RIGHT_MOTOR); // Set Dir right motor = low (backward)
 	}
 	else
 	{
-		IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) & ~DIR_LEFT_MOTOR); // Set Dir left motor = low (backward)
+		IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) & ~DIR_LEFT_MOTOR); // Set Dir left motor = low (backward)
 	}
 	return;
 }
@@ -99,9 +99,9 @@ void motorBackward(int lr)
  */
 void setMoveSpeed(int speed)
 {
-    if(speed > 100)
+    if(speed > 50)
     {
-        speed = 100;
+        speed = 50;
     }
     else if(speed < 0)
     {

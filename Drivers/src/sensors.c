@@ -16,13 +16,41 @@
 #include <stdio.h>
 
 #define TRACK_WIRE_OUTPUT PIN6
+#define FR_BUMPER PIN3
+#define FL_BUMPER PIN4
+#define BR_BUMPER PIN5
+#define BL_BUMPER PIN6
+
 
 uint8_t readTrackWire()
 {
     return (IO_PortsReadPort(PORTY) & TRACK_WIRE_OUTPUT) >> 6;
 }
 
+/*
+ * desc: This function will read the bumper states into a 8-bit value
+ * FR Bumper - Bit 0 
+ * FL Bumper - Bit 1 
+ * BR Bumper - Bit 2 
+ * BL Bumper - Bit 3
+ */
+uint8_t readBumpers()
+{
+    uint8_t retVal = 0;
+    
+    retVal = retVal | (IO_PortsReadPort(PORTW) & FR_BUMPER);
+    retVal = retVal | (IO_PortsReadPort(PORTW) & FL_BUMPER);
+    retVal = retVal | (IO_PortsReadPort(PORTW) & BR_BUMPER);
+    retVal = retVal | (IO_PortsReadPort(PORTW) & BL_BUMPER);
+    
+    return (retVal >> 3);
+}
+
 void sensorsInit()
 {
-    IO_PortsSetPortOutputs(PORTY,TRACK_WIRE_OUTPUT);
+    //Init for track wire and beacon detector
+    IO_PortsSetPortInputs(PORTY,TRACK_WIRE_OUTPUT);
+    
+    // Init for Bumpers
+    IO_PortsSetPortInputs(PORTW,FR_BUMPER|FL_BUMPER|BR_BUMPER|BL_BUMPER);
 }

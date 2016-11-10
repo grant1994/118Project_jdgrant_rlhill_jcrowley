@@ -6,7 +6,6 @@
                    projectFiles="true">
       <itemPath>C:/CMPE118/include/AD.h</itemPath>
       <itemPath>C:/CMPE118/include/BOARD.h</itemPath>
-      <itemPath>C:/CMPE118/include/roach.h</itemPath>
       <itemPath>C:/CMPE118/include/serial.h</itemPath>
       <itemPath>C:/CMPE118/include/pwm.h</itemPath>
       <itemPath>C:/CMPE118/include/ES_CheckEvents.h</itemPath>
@@ -40,7 +39,6 @@
                    projectFiles="true">
       <itemPath>C:/CMPE118/src/AD.c</itemPath>
       <itemPath>C:/CMPE118/src/BOARD.c</itemPath>
-      <itemPath>C:/CMPE118/src/roach.c</itemPath>
       <itemPath>C:/CMPE118/src/serial.c</itemPath>
       <itemPath>C:/CMPE118/src/pwm.c</itemPath>
       <itemPath>C:/CMPE118/src/ES_CheckEvents.c</itemPath>
@@ -55,8 +53,8 @@
       <itemPath>Drivers/src/motor.c</itemPath>
       <itemPath>Drivers/src/sensors.c</itemPath>
       <itemPath>Services/src/SyncSampling.c</itemPath>
-      <itemPath>TemplateES_Main.c</itemPath>
       <itemPath>EventCheckers/src/EventChecker.c</itemPath>
+      <itemPath>main.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
