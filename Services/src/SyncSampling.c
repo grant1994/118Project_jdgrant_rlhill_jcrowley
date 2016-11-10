@@ -214,24 +214,3 @@ ES_Event RunSyncSamplingService(ES_Event ThisEvent)
     }
     return ReturnEvent;
 }
-
-// CHANGES NESSESCARY FOR ESCONFIGURE.H FILE
-
-/*
-
-#define TIMER0_RESP_FUNC PostSyncSamplingService
-#define SYNC_SAMPLE_TIMER 0
-#define NUM_SERVICES 2
-
-These are the definitions for the SyncSampling Service 
-
-#define SERV_1_HEADER "SyncSampling.h"
-#define SERV_1_INIT InitSyncSamplingService
-#define SERV_1_RUN RunSyncSamplingService
-#define SERV_1_QUEUE_SIZE 3
-
-I would also have to add ON_TAPE, OFF_TAPE, 
-and TAPE_SENSOR_TRIPPED to the ES_EventTyp_t
-enum list and to the EventNames string list.
-
-*/

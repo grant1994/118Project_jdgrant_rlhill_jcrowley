@@ -28,6 +28,7 @@
       <itemPath>Drivers/inc/sensors.h</itemPath>
       <itemPath>Services/inc/SyncSampling.h</itemPath>
       <itemPath>EventCheckers/inc/EventChecker.h</itemPath>
+      <itemPath>Level1HSM/inc/TopLevelHSM.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -55,6 +56,7 @@
       <itemPath>Services/src/SyncSampling.c</itemPath>
       <itemPath>EventCheckers/src/EventChecker.c</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>Level1HSM/src/TopLevelHSM.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -111,7 +113,7 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="Drivers\inc;C:\CMPE118\include;Services\inc;EventCheckers\inc;."/>
+                  value="Drivers\inc;C:\CMPE118\include;Services\inc;EventCheckers\inc;.;Level1HSM\inc"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="false"/>
