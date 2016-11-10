@@ -20,7 +20,7 @@
  * MODULE #DEFINES                                                             *
  ******************************************************************************/
 //#define DEBUG
-#define MOTOR_TEST 
+//#define MOTOR_TEST 
 #ifdef DEBUG
 #define TIMER_0_TICKS 500 // 2 ticks = 2 ms
 #else
