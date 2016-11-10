@@ -13,13 +13,19 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "TimerService.h"
+#include "motor.h"
 #include <stdio.h>
 
 /*******************************************************************************
  * MODULE #DEFINES                                                             *
  ******************************************************************************/
 //#define DEBUG
+#define MOTOR_TEST 
+#ifdef DEBUG
 #define TIMER_0_TICKS 500 // 2 ticks = 2 ms
+#else
+#define TIMER_0_TICKS 2 // 2 ticks = 2 ms
+#endif
 #define ON 1
 #define HI_THRESHOLD 150
 #define LO_THRESHOLD 100
@@ -61,22 +67,20 @@ uint8_t InitSyncSamplingService(uint8_t Priority) {
 
     MyPriority = Priority;
 
-    // I am assuming BOARD_Init(); is called in some beautiful main function
-    // AD_Init(); should go there too but I am leaving it here anyways because
-    // it is not essential to the main function like BOARD_Init();
-    AD_Init();
-    LED_Init();
-    LED_AddBanks(LED_BANK1|LED_BANK2|LED_BANK3);
-    LED_SetBank(LED_BANK1,0x0);
-    LED_SetBank(LED_BANK2,0x0);
-    LED_SetBank(LED_BANK3,0x0);
+    // TODO : Move this init stuff to their proper init functions and then call the init
+    // functions in main.
+    
     IO_PortsSetPortOutputs(PORTZ, PIN3|PIN4|PIN5|PIN7);
     AD_AddPins(AD_PORTV5|AD_PORTV6|AD_PORTV7|AD_PORTV8);
-
+#ifdef MOTOR_TEST
+    moveForward();
+    setMoveSpeed(50);
+#endif 
     // post the initial transition event
     IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | PIN3); // This Sets PIN7 (the LED) high for the first sample
     IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | PIN4); // This Sets PIN7 (the LED) high for the first sample
     IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | PIN5); // This Sets PIN7 (the LED) high for the first sample
+    IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | PIN7); // This Sets PIN7 (the LED) high for the first sample
     ES_Timer_InitTimer(SYNC_SAMPLE_TIMER, TIMER_0_TICKS);
     ThisEvent.EventType = ES_INIT;
     if (ES_PostToService(MyPriority, ThisEvent) == TRUE) {
@@ -113,13 +117,12 @@ uint8_t PostSyncSamplingService(ES_Event ThisEvent) {
 ES_Event RunSyncSamplingService(ES_Event ThisEvent)
 {
     int i;
-    static ES_EventTyp_t lastEvent = OFF_TAPE;
-    //ES_Event postEvent;
-    ES_EventTyp_t curEvent;
     ES_Event ReturnEvent;
     ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
     static uint8_t curLEDState = ON; // LED Starts as on (in init function).
     static int16_t adcValOn[NUM_LEDS], adcValOff[NUM_LEDS], adcDiff[NUM_LEDS];
+    static ES_EventTyp_t lastEvent [NUM_LEDS] = {OFF_TAPE,OFF_TAPE,OFF_TAPE,OFF_TAPE};
+    ES_EventTyp_t curEvent [4];
 
     switch (ThisEvent.EventType) 
     {
@@ -147,6 +150,7 @@ ES_Event RunSyncSamplingService(ES_Event ThisEvent)
                 }
                 curLEDState = FALSE;
             } else {
+                curLEDState = ON;
                 for(i = 0;i < NUM_LEDS;i++)
                 {
                     adcValOff[i] = AD_ReadADPin(adPins[i]); // Read the LED after it has been off for 2 ms
@@ -154,8 +158,6 @@ ES_Event RunSyncSamplingService(ES_Event ThisEvent)
                     printf("\r\nadcValOff[%d]: %d",i,adcValOff[i]);
                     #endif
                     IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | ledPins[i]); // This Sets PIN7 (the LED) high
-
-                    curLEDState = ON;
 
                     adcDiff[i] = adcValOn[i] - adcValOff[i];
                     #ifdef DEBUG
@@ -171,6 +173,7 @@ ES_Event RunSyncSamplingService(ES_Event ThisEvent)
                         {
                            LED_SetBank(ledBanks[i],LED_GetBank(ledBanks[i]) | 0xC); 
                         }
+                        curEvent[i] = OFF_TAPE;
                     }
                     else if (adcDiff[i] < LO_THRESHOLD)
                     {
@@ -182,32 +185,33 @@ ES_Event RunSyncSamplingService(ES_Event ThisEvent)
                         {
                            LED_SetBank(ledBanks[i],LED_GetBank(ledBanks[i]) & ~0xC); 
                         }
+                        curEvent[i] = ON_TAPE;
                     }
+                    // if we get into this condition, a tape sensor was triggered either on or off
+                    // this is where we can post events to our fsm
+                    if (curEvent[i] != lastEvent[i])
+                    {
+                        #ifdef MOTOR_TEST
+                        if (curEvent[i] == ON_TAPE)
+                        {
+                            stopMoving();
+                        }
+                        else
+                        {
+                            setMoveSpeed(50);
+                        }
+                        #endif
+                    }
+                    lastEvent[i] = curEvent[i];
                 }
             }
-                // Check if tape was tripped
-                /*if(curEvent == ON_TAPE && lastEvent == OFF_TAPE)
-                {
-                    printf("\r\nWe triggered!");
-                    LED_SetBank(LED_BANK1,0xF);
-                   // postEvent.EventType = TAPE_SENSOR_TRIPPED;
-                    //postEvent.EventParam = 1;      // I am assuming we are only sampling what is known as tape sensor 1.
-                                                   // If we were doing multiple tape sensor 1 might have a #define for it like
-                                                   // #define CENTER_TAPE_SENSOR 1
-                    //ES_PostToService(MyPriority, postEvent);
-                } else if(curEvent == OFF_TAPE)
-                {
-                    LED_SetBank(LED_BANK1,0x0);
-                }
-            } */
             break;
 
         default:
-            printf("\r\nRecieved unexpected Event: %s\twith Param: 0x%X",
+            printf("\r\nRecieved Event: %s\twith Param: 0x%X",
                     EventNames[ThisEvent.EventType], ThisEvent.EventParam);
             break;
     }
-    lastEvent = curEvent;
     return ReturnEvent;
 }
 

@@ -26,7 +26,7 @@ void moveBackward();
 void moveForward();
 
 // This function sets speed (duty cycle) to 0
-void stop();
+void stopMoving();
 
 // This function is used to control direction of individual motor (l/r)
 void motorForward(int lr);
@@ -36,7 +36,7 @@ void motorBackward(int lr);
 
 // This function is used to set the speed of each motor (duty cycle).
 // Both motors should have the same speed for easy FKM movements.
-void setSpeed(int speed);
+void setMoveSpeed(int speed);
 
 
 #endif /* _MOTOR_H */

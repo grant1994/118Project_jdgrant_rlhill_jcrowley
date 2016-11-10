@@ -15,8 +15,8 @@ Description:
 	on at least two seperate targets. 
 
 Directory Structure: 
-	- Drivers for various peripherals (drivers and sensors) are located in the Drivers folder. 
-	- Services for synchronous sampling and motor control in the services folder
-	- EventCheckers for beacon, track wire, and bump detection in the EventCheckers folder.
+	* Drivers for various peripherals (drivers and sensors) are located in the Drivers folder. 
+	* Services for synchronous sampling and motor control in the services folder.
+	* EventCheckers for beacon, track wire, and bump detection in the EventCheckers folder.
 
 

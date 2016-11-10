@@ -18,12 +18,12 @@
 //#define DEBUG
 #define PWM_LEFT_MOTOR  PWM_PORTY10
 #define PWM_RIGHT_MOTOR PWM_PORTY12
-#define DIR_LEFT_MOTOR  PIN10 
-#define DIR_RIGHT_MOTOR PIN11
+#define DIR_LEFT_MOTOR  PIN11 
+#define DIR_RIGHT_MOTOR PIN12
 
 void motorInit()
 {
-    IO_PortsSetPortOutputs(PORTY, DIR_LEFT_MOTOR|DIR_RIGHT_MOTOR);
+    IO_PortsSetPortOutputs(PORTZ, DIR_LEFT_MOTOR|DIR_RIGHT_MOTOR);
     PWM_AddPins(PWM_LEFT_MOTOR|PWM_RIGHT_MOTOR);
 }
 
@@ -50,9 +50,9 @@ void moveForward()
 	motorBackward(0);
 }
 
-void stop()
+void stopMoving()
 {
-	setSpeed(0);
+	setMoveSpeed(0);
 }
 
 /*
@@ -64,11 +64,11 @@ void motorForward(int lr)
 	// sets IN0 = 0, IN1 = 1
 	if (lr) 
 	{
-        IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTY) | DIR_RIGHT_MOTOR); // Set Dir right motor = high (forward)
+        IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | DIR_RIGHT_MOTOR); // Set Dir right motor = high (forward)
 	}
 	else
 	{   
-        IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTY) | DIR_LEFT_MOTOR); // Set Dir left motor = high (forward)
+        IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | DIR_LEFT_MOTOR); // Set Dir left motor = high (forward)
 	}
 	return;
 }
@@ -82,11 +82,11 @@ void motorBackward(int lr)
 	// sets IN0 = 0, IN1 = 1
 	if (lr) 
 	{
-		IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTY) & ~DIR_RIGHT_MOTOR); // Set Dir right motor = low (backward)
+		IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) & ~DIR_RIGHT_MOTOR); // Set Dir right motor = low (backward)
 	}
 	else
 	{
-		IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTY) & ~DIR_LEFT_MOTOR); // Set Dir left motor = low (backward)
+		IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) & ~DIR_LEFT_MOTOR); // Set Dir left motor = low (backward)
 	}
 	return;
 }
@@ -97,7 +97,7 @@ void motorBackward(int lr)
  * and calculate pwm required to supply enough voltage,
  * that or we use feedback from our quad encoders.
  */
-void setSpeed(int speed)
+void setMoveSpeed(int speed)
 {
     if(speed > 100)
     {
@@ -107,8 +107,8 @@ void setSpeed(int speed)
     {
         speed = 0;
     }
-    PWM_SetDutyCycle(PWM_LEFT_MOTOR,speed);
-    PWM_SetDutyCycle(PWM_RIGHT_MOTOR,speed);
+    PWM_SetDutyCycle(PWM_LEFT_MOTOR,speed*10);
+    PWM_SetDutyCycle(PWM_RIGHT_MOTOR,speed*10);
     
     return;
 }
