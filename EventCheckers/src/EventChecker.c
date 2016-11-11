@@ -69,3 +69,33 @@ uint8_t TrackWireSignal(void) {
     return (returnREAD);
 
 }
+
+uint8_t BeaconSignal(void) {
+    static ES_EventTyp_t PRESTATE = BEACON_OFF;
+    ES_EventTyp_t CURRENTBEACON;
+    ES_Event thisEvent;
+    uint8_t returnREAD = FALSE;
+ 
+    uint8_t Whichbeacon = readBeaconDetector();
+
+    if (Whichbeacon) {
+        CURRENTBEACON = BEACON_OFF;
+        LED_SetBank(LED_BANK2,0x0);
+        //printf("\r\ntrack wire is on");
+    } else {
+        
+        CURRENTBEACON = BEACON_ON;
+        //printf("\r\ntrack wire is off");
+        LED_SetBank(LED_BANK2,0xF);
+    }
+
+    if (CURRENTBEACON != PRESTATE) {
+        thisEvent.EventType = CURRENTBEACON;
+        thisEvent.EventParam = Whichbeacon;
+        returnREAD = TRUE;
+        PRESTATE = CURRENTBEACON;
+       // PostGenericService(thisEvent);
+    }
+    return (returnREAD);
+
+}
