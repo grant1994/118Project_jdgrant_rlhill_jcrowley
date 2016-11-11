@@ -139,7 +139,7 @@ ES_Event RunTopLevelHSM(ES_Event ThisEvent)
         //state machine does
         //ThisEvent = RunAmmoSearchHSM(ThisEvent);
         switch (ThisEvent.EventType) {
-            case TW_MIDDLE_TRIGGERED:
+            case TW_TRIGGERED:
                 // check if rising edge
                 if(ThisEvent.EventParam)
                 {
@@ -155,7 +155,7 @@ ES_Event RunTopLevelHSM(ES_Event ThisEvent)
         
     case AmmoLoad:
         switch (ThisEvent.EventType) {
-            case TW_MIDDLE_TRIGGERED:
+            case TW_TRIGGERED:
                 // check if falling edge
                 if(!ThisEvent.EventParam)
                 {
