@@ -9,10 +9,8 @@
 
 #include "BOARD.h"
 #include "IO_Ports.h"
-#include "LED.h"
-#include "pwm.h"
 #include "AD.h"
-#include "motor.h"
+#include "sensors.h"
 #include <stdio.h>
 
 #define TRACK_WIRE_OUTPUT PIN6
@@ -53,4 +51,9 @@ void sensorsInit()
     
     // Init for Bumpers
     IO_PortsSetPortInputs(PORTW,FR_BUMPER|FL_BUMPER|BR_BUMPER|BL_BUMPER);
+}
+
+uint8_t readBeaconDetector()
+{
+    return;
 }

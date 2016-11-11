@@ -1,5 +1,5 @@
 /*
- * File:   TopLevelHSM.h
+ * File:   AmmoSearchSubHSM.h
  * Author: jdgrant
  *
  * This file includes the top level of our hierarchal state machine. At this level
@@ -15,8 +15,9 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "BOARD.h"
-#include "TopLevelHSM.h"
+#include "AmmoSearchSubHSM.h"
 #include "sensors.h"
+#include "motor.h"
 
 /*******************************************************************************
  * PRIVATE #DEFINES                                                            *
@@ -25,27 +26,22 @@
 /*******************************************************************************
  * MODULE #DEFINES                                                             *
  ******************************************************************************/
+// This might need to be changed
 #define PLUNGER_BUMPER 0x4
 
 
 typedef enum {
     InitPState,
-    AmmoSearch,
-    AmmoLoad,
-    FirstTargetSearch,
-    FirstTargetUnload,
-    SecondTargetSearch,
-    SecondTargetUnload,
+    Forward,
+    TankTurn,
+    Backward,
 } Lab0HSMState_t;
 
 static const char *StateNames[] = {
 	"InitPState",
-	"AmmoSearch",
-	"AmmoLoad",
-	"FirstTargetSearch",
-	"FirstTargetUnload",
-	"SecondTargetSearch",
-	"SecondTargetUnload",
+	"Forward",
+	"TankTurn",
+	"Backward",
 };
 
 
@@ -70,14 +66,14 @@ static uint8_t MyPriority;
  ******************************************************************************/
 
 /**
- * @Function InitTopLevelHSM(uint8_t Priority)
+ * @Function InitAmmoSearchSubHSM(uint8_t Priority)
  * @param Priority - internal variable to track which event queue to use
  * @return TRUE or FALSE
  * @brief This will get called by the framework at the beginning of the code
  *        execution. It will post an ES_INIT event to the appropriate event
- *        queue, which will be handled inside RunTopLevelHSM function.
+ *        queue, which will be handled inside RunAmmoSearchSubHSM function.
  */
-uint8_t InitTopLevelHSM(uint8_t Priority)
+uint8_t InitAmmoSearchSubHSM(uint8_t Priority)
 {
     MyPriority = Priority;
     // put us into the Initial PseudoState
@@ -91,27 +87,28 @@ uint8_t InitTopLevelHSM(uint8_t Priority)
 }
 
 /**
- * @Function PostTopLevelHSM(ES_Event ThisEvent)
+ * @Function PostAmmoSearchSubHSM(ES_Event ThisEvent)
  * @param ThisEvent - the event (type and param) to be posted to queue
  * @return TRUE or FALSE
  * @brief This function is a wrapper to the queue posting function.
  */
-uint8_t PostTopLevelHSM(ES_Event ThisEvent)
+uint8_t PostAmmoSearchSubHSM(ES_Event ThisEvent)
 {
     return ES_PostToService(MyPriority, ThisEvent);
 }
 
 /**
- * @Function RunTopLevelHSM(ES_Event ThisEvent)
+ * @Function RunAmmoSearchSubHSM(ES_Event ThisEvent)
  * @param ThisEvent - the event (type and param) to be responded.
  * @return Event - return event (type and param), in general should be ES_NO_EVENT
  * @brief This is the implementation for the top level of our state machine and 
  *        it contains the basic logic for our autonomous robot to meet the minimum
  *        specs of the competition.
  */
-ES_Event RunTopLevelHSM(ES_Event ThisEvent)
+ES_Event RunAmmoSearchSubHSM(ES_Event ThisEvent)
 {
     uint8_t makeTransition = FALSE; // use to flag transition
+    uint8_t turnParam; // use this flag to turnCW or turnCCW
     Lab0HSMState_t nextState; // <- change type to correct enum
 
     ES_Tattle(); // trace call stack
@@ -126,25 +123,38 @@ ES_Event RunTopLevelHSM(ES_Event ThisEvent)
             // Initialize all sub-state machines
             //InitAmmoSearchHSM();
             // now put the machine into the actual initial state
-            nextState = AmmoSearch;
+            nextState = Forward;
             makeTransition = TRUE;
             ThisEvent.EventType = ES_NO_EVENT;
             ;
         }
         break;
 
-    case AmmoSearch: // in the first state, replace this with correct names
+    case Forward: // in the first state, replace this with correct names
         // run sub-state machine for this state
         //NOTE: the SubState Machine runs and responds to events before anything in the this
         //state machine does
         //ThisEvent = RunAmmoSearchHSM(ThisEvent);
         switch (ThisEvent.EventType) {
-            case TW_MIDDLE_TRIGGERED:
-                // check if rising edge
-                if(ThisEvent.EventParam)
+            case ES_ENTRY:
+                moveForward();
+                break;
+            case ES_NO_EVENT:
+            default:
+                break;
+        }
+        break;
+        
+    case TankTurn:
+        switch (ThisEvent.EventType) {  
+            case ES_ENTRY:
+                if (turnParam)
                 {
-                    nextState = AmmoLoad;
-                    makeTransition = TRUE;
+                    tankTurnRight();
+                }
+                else
+                {
+                    tankTurnLeft();
                 }
                 break;
             case ES_NO_EVENT:
@@ -153,22 +163,10 @@ ES_Event RunTopLevelHSM(ES_Event ThisEvent)
         }
         break;
         
-    case AmmoLoad:
+    case Backward:
         switch (ThisEvent.EventType) {
-            case TW_MIDDLE_TRIGGERED:
-                // check if falling edge
-                if(!ThisEvent.EventParam)
-                {
-                    nextState = AmmoSearch;
-                    makeTransition = TRUE;
-                }
-                break;
-            case BUMPED:
-                if(ThisEvent.EventParam & PLUNGER_BUMPER)
-                {
-                    nextState = FirstTargetSearch;
-                    makeTransition = TRUE;
-                }
+            case ES_ENTRY:
+                moveBackward();
                 break;
             case ES_NO_EVENT:
             default:
@@ -176,83 +174,15 @@ ES_Event RunTopLevelHSM(ES_Event ThisEvent)
         }
         break;
         
-    case FirstTargetSearch:
-        switch (ThisEvent.EventType) {
-            case TS_FL_TRIGGERED:
-                if(ThisEvent.EventParam && readBeaconDetector())
-                {
-                    nextState = FirstTargetUnload;
-                    makeTransition = TRUE;
-                }
-                break;
-            case TS_FR_TRIGGERED:
-                if(ThisEvent.EventParam && readBeaconDetector())
-                {
-                    nextState = FirstTargetUnload;
-                    makeTransition = TRUE;
-                }
-                break;
-            case ES_NO_EVENT:
-            default:
-                break;
-        }
-        break;
-        
-    case FirstTargetUnload:
-        switch (ThisEvent.EventType) {
-            case UNLOADED:
-                nextState = SecondTargetSearch;
-                makeTransition = TRUE;
-                break;
-            case ES_NO_EVENT:
-            default:
-                break;
-        }
-        break;
-        
-    case SecondTargetSearch:
-        switch (ThisEvent.EventType) {
-            case TS_FL_TRIGGERED:
-                if(ThisEvent.EventParam && readBeaconDetector())
-                {
-                    nextState = FirstTargetUnload;
-                    makeTransition = TRUE;
-                }
-                break;
-            case TS_FR_TRIGGERED:
-                if(ThisEvent.EventParam && readBeaconDetector())
-                {
-                    nextState = FirstTargetUnload;
-                    makeTransition = TRUE;
-                }
-                break;
-            case ES_NO_EVENT:
-            default:
-                break;
-        }
-        break;
-    
-    case SecondTargetUnload:
-        switch (ThisEvent.EventType) {
-            case UNLOADED:
-                nextState = AmmoSearch;
-                makeTransition = TRUE;
-                break;
-            case ES_NO_EVENT:
-            default:
-                break;
-        }
-        break;
-    
     default: // all unhandled states fall into here
         break;
     } // end switch on Current State
 
     if (makeTransition == TRUE) { // making a state transition, send EXIT and ENTRY
         // recursively call the current state with an exit event
-        RunTopLevelHSM(EXIT_EVENT); // <- rename to your own Run function
+        RunAmmoSearchSubHSM(EXIT_EVENT); // <- rename to your own Run function
         CurrentState = nextState;
-        RunTopLevelHSM(ENTRY_EVENT); // <- rename to your own Run function
+        RunAmmoSearchSubHSM(ENTRY_EVENT); // <- rename to your own Run function
     }
 
     ES_Tail(); // trace call stack end
