@@ -13,6 +13,7 @@
 #include "sensors.h"
 #include <stdio.h>
 
+//#define DEBUG
 #define TRACK_WIRE_OUTPUT PIN6
 #define FR_BUMPER PIN3
 #define FL_BUMPER PIN4
@@ -22,7 +23,11 @@
 
 uint8_t readTrackWire()
 {
-    return (IO_PortsReadPort(PORTY) & TRACK_WIRE_OUTPUT) >> 6;
+    uint8_t retVal = (IO_PortsReadPort(PORTY) & TRACK_WIRE_OUTPUT) >> 6;
+#ifdef DEBUG
+    printf("\r\nPort Y val is: %d,Track Wire: %d", IO_PortsReadPort(PORTY),retVal);
+#endif
+    return retVal;
 }
 
 /*

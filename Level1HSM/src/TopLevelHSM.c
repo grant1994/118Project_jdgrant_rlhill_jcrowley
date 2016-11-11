@@ -36,7 +36,7 @@ typedef enum {
     FirstTargetUnload,
     SecondTargetSearch,
     SecondTargetUnload,
-} Lab0HSMState_t;
+} TopLevelHSMState_t;
 
 static const char *StateNames[] = {
 	"InitPState",
@@ -61,7 +61,7 @@ static const char *StateNames[] = {
 /* You will need MyPriority and the state variable; you may need others as well.
  * The type of state variable should match that of enum in header file. */
 
-static Lab0HSMState_t CurrentState = InitPState; // <- change enum name to match ENUM
+static TopLevelHSMState_t CurrentState = InitPState; // <- change enum name to match ENUM
 static uint8_t MyPriority;
 
 
@@ -112,7 +112,7 @@ uint8_t PostTopLevelHSM(ES_Event ThisEvent)
 ES_Event RunTopLevelHSM(ES_Event ThisEvent)
 {
     uint8_t makeTransition = FALSE; // use to flag transition
-    Lab0HSMState_t nextState; // <- change type to correct enum
+    TopLevelHSMState_t nextState; // <- change type to correct enum
 
     ES_Tattle(); // trace call stack
 

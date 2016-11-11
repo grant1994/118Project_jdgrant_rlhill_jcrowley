@@ -51,6 +51,8 @@ typedef enum {
     TS_FM_TRIGGERED,
     TS_BL_TRIGGERED,
     TS_BR_TRIGGERED,
+    TRACK_WIRE_ON,
+    TRACK_WIRE_OFF,
     TW_MIDDLE_TRIGGERED,
     TW_BACK_TRIGGERED,
     BUMPED,
@@ -78,6 +80,8 @@ static const char *EventNames[] = {
 	"TS_FM_TRIGGERED",
 	"TS_BL_TRIGGERED",
 	"TS_BR_TRIGGERED",
+	"TRACK_WIRE_ON",
+	"TRACK_WIRE_OFF",
 	"TW_MIDDLE_TRIGGERED",
 	"TW_BACK_TRIGGERED",
 	"BUMPED",
@@ -92,11 +96,10 @@ static const char *EventNames[] = {
 
 /****************************************************************************/
 // This are the name of the Event checking function header file.
-#define EVENT_CHECK_HEADER "ES_Configure.h"
-
+#define EVENT_CHECK_HEADER "EventChecker.h" 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST
+#define EVENT_CHECK_LIST TrackWireSignal
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the
