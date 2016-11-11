@@ -101,7 +101,7 @@ static const char *EventNames[] = {
 #define EVENT_CHECK_HEADER "EventChecker.h" 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST TrackWireSignal,  BeaconSignal
+#define EVENT_CHECK_LIST Track_Wire_Signal,  Beacon_Signal
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the

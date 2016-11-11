@@ -14,17 +14,17 @@
 #include <stdio.h>
 
 //#define DEBUG
-#define TRACK_WIRE_OUTPUT PIN6
+#define TRACKWIRE_OUTPUT PIN6
 #define FR_BUMPER PIN3
 #define FL_BUMPER PIN4
 #define BR_BUMPER PIN5
 #define BL_BUMPER PIN6
-#define BEACON_OUTPUT PIN7 
+#define BEACONDETECT_OUTPUT PIN7 
 
 
 uint8_t readTrackWire()
 {
-    uint8_t retVal = (IO_PortsReadPort(PORTY) & TRACK_WIRE_OUTPUT) >> 6;
+    uint8_t retVal = (IO_PortsReadPort(PORTY) & TRACKWIRE_OUTPUT) >> 6;
 #ifdef DEBUG
     printf("\r\nPort Y val is: %d,Track Wire: %d", IO_PortsReadPort(PORTY),retVal);
 #endif
@@ -53,7 +53,7 @@ uint8_t readBumpers()
 void sensorsInit()
 {
     //Init for track wire and beacon detector
-    IO_PortsSetPortInputs(PORTY,TRACK_WIRE_OUTPUT | BEACON_OUTPUT );
+    IO_PortsSetPortInputs(PORTY,TRACKWIRE_OUTPUT | BEACONDETECT_OUTPUT );
 
     // Init for Bumpers
     IO_PortsSetPortInputs(PORTW,FR_BUMPER|FL_BUMPER|BR_BUMPER|BL_BUMPER);
@@ -62,7 +62,7 @@ void sensorsInit()
 uint8_t readBeaconDetector()
 
     {
-    uint8_t retVal = (IO_PortsReadPort(PORTY) & BEACON_OUTPUT ) >> 7;
+    uint8_t retVal = (IO_PortsReadPort(PORTY) & BEACONDETECT_OUTPUT ) >> 7;
 //#ifdef DEBUG
    // printf("\r\nPort Y val is: %d,Track Wire: %d", IO_PortsReadPort(PORTY),retVal);
 //#endif
