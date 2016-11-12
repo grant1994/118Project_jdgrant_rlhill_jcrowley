@@ -20,6 +20,8 @@
 #define PWM_RIGHT_MOTOR PWM_PORTY12
 #define DIR_LEFT_MOTOR  PIN9 
 #define DIR_RIGHT_MOTOR PIN11
+#define RIGHT 1
+#define LEFT 0
 
 void motorInit()
 {
@@ -27,27 +29,39 @@ void motorInit()
     PWM_AddPins(PWM_LEFT_MOTOR|PWM_RIGHT_MOTOR);
 }
 
+void pivotTurnRight()
+{
+	motorForward(LEFT);
+	motoStop(RIGHT);
+}
+
+void pivotTurnLeft()
+{
+	motorForward(RIGHT);
+	motoStop(LEFT);
+}
+
 void tankTurnRight()
 {
-	motorForward(1);
-	motorForward(0);
+	motorForward(RIGHT);
+	motorForward(LEFT);
 }
 void tankTurnLeft()
 {
-	motorBackward(0);
-	motorBackward(1);
+	motorBackward(LEFT);
+	motorBackward(RIGHT);
 }
 
 void moveBackward()
 {
-	motorForward(0);
-	motorBackward(1);
+	motorForward(LEFT);
+	motorBackward(RIGHT);
 }
 
 void moveForward()
 {
-	motorForward(1);
-	motorBackward(0);
+	motorForward(RIGHT);
+	motorBackward(LEFT);
 }
 
 void stopMoving()
@@ -62,7 +76,7 @@ void stopMoving()
 void motorForward(int lr)
 {
 	// sets IN0 = 0, IN1 = 1
-	if (lr) 
+	if (RIGHT) 
 	{
         IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) | DIR_RIGHT_MOTOR); // Set Dir right motor = high (forward)
 	}
@@ -80,13 +94,26 @@ void motorForward(int lr)
 void motorBackward(int lr)
 {
 	// sets IN0 = 0, IN1 = 1
-	if (lr) 
+	if (RIGHT) 
 	{
 		IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) & ~DIR_RIGHT_MOTOR); // Set Dir right motor = low (backward)
 	}
 	else
 	{
 		IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) & ~DIR_LEFT_MOTOR); // Set Dir left motor = low (backward)
+	}
+	return;
+}
+
+void motorStop(int lr)
+{
+	if (RIGHT) 
+	{
+		PWM_SetDutyCycle(0);
+	}
+	else
+	{
+		PWM_SetDutyCycle(0);
 	}
 	return;
 }

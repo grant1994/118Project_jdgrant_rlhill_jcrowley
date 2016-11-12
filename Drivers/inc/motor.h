@@ -38,5 +38,14 @@ void motorBackward(int lr);
 // Both motors should have the same speed for easy FKM movements.
 void setMoveSpeed(int speed);
 
+// This function is used to pivot turn to the right
+void pivotTurnRight();
+
+// This function is used to pivot turn to the left
+void pivotTurnLeft();
+
+// This function can be used to stop a specific motor
+void motorStop(int lr);
+
 
 #endif /* _MOTOR_H */

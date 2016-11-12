@@ -29,7 +29,7 @@
 #define ON 1
 #define HI_THRESHOLD 150
 #define LO_THRESHOLD 100
-#define NUM_LEDS 4
+#define NUM_LEDS 5
 
 /*******************************************************************************
  * PRIVATE FUNCTION PROTOTYPES                                                 *
@@ -44,9 +44,9 @@
 static const char *eventName;
 static ES_Event storedEvent;
 static uint8_t MyPriority;
-static unsigned int adPins[]={AD_PORTV5,AD_PORTV6,AD_PORTV7,AD_PORTV8};
-static uint16_t ledPins[]={PIN3,PIN4,PIN5,PIN7};
-static uint16_t ledBanks[]={LED_BANK1,LED_BANK1,LED_BANK2,LED_BANK2};
+static unsigned int adPins[]={AD_PORTV3,AD_PORTV4,AD_PORTV5,AD_PORTV6,AD_PORTV7};
+static uint16_t ledPins[]={PIN3,PIN4,PIN5,PIN7,PIN10};
+static uint16_t ledBanks[]={LED_BANK1,LED_BANK1,LED_BANK2,LED_BANK2,LED_BANK3};
 
 /*******************************************************************************
  * PUBLIC FUNCTIONS                                                            *
@@ -70,8 +70,8 @@ uint8_t InitSyncSamplingService(uint8_t Priority) {
     // TODO : Move this init stuff to their proper init functions and then call the init
     // functions in main.
     
-    IO_PortsSetPortOutputs(PORTZ, PIN3|PIN4|PIN5|PIN7);
-    AD_AddPins(AD_PORTV5|AD_PORTV6|AD_PORTV7|AD_PORTV8);
+    IO_PortsSetPortOutputs(PORTZ, PIN3|PIN4|PIN5|PIN7|PIN10);
+    AD_AddPins(AD_PORTV3|AD_PORTV4|AD_PORTV5|AD_PORTV6|AD_PORTV7);
 #ifdef MOTOR_TEST
     moveForward();
     setMoveSpeed(50);
@@ -81,6 +81,7 @@ uint8_t InitSyncSamplingService(uint8_t Priority) {
     IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | PIN4); // This Sets PIN7 (the LED) high for the first sample
     IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | PIN5); // This Sets PIN7 (the LED) high for the first sample
     IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | PIN7); // This Sets PIN7 (the LED) high for the first sample
+    IO_PortsWritePort(PORTZ,IO_PortsReadPort(PORTZ) | PIN10); // This Sets PIN7 (the LED) high for the first sample
     ES_Timer_InitTimer(SYNC_SAMPLE_TIMER, TIMER_0_TICKS);
     ThisEvent.EventType = ES_INIT;
     if (ES_PostToService(MyPriority, ThisEvent) == TRUE) {
@@ -117,7 +118,9 @@ uint8_t PostSyncSamplingService(ES_Event ThisEvent) {
 ES_Event RunSyncSamplingService(ES_Event ThisEvent)
 {
     int i;
+    uint8_t tapeTriggered = FALSE;
     ES_Event ReturnEvent;
+    ES_Event PostEvent;
     ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
     static uint8_t curLEDState = ON; // LED Starts as on (in init function).
     static int16_t adcValOn[NUM_LEDS], adcValOff[NUM_LEDS], adcDiff[NUM_LEDS];
@@ -191,6 +194,7 @@ ES_Event RunSyncSamplingService(ES_Event ThisEvent)
                     // this is where we can post events to our fsm
                     if (curEvent[i] != lastEvent[i])
                     {
+                        tapeTriggered = TRUE;
                         #ifdef MOTOR_TEST
                         if (curEvent[i] == ON_TAPE)
                         {
@@ -203,6 +207,25 @@ ES_Event RunSyncSamplingService(ES_Event ThisEvent)
                         #endif
                     }
                     lastEvent[i] = curEvent[i];
+                }
+                // On further thought, we decided posting one event with curLevel of each sensor is a better idea
+                if (tapeTriggered)
+                {   
+                    PostEvent.EventParam = 0;
+                    PostEvent.EventType = TAPE_TRIGGERED;
+                    for(i = 0;i < NUM_LEDS;i++)
+                    {
+                        if(curEvent[i] == ON_TAPE)
+                        {
+                            PostEvent.EventParam = PostEvent.EventParam | (1 << i);
+                        }
+                        else
+                        {
+                            PostEvent.EventParam = PostEvent.EventParam & ~(1 << i);
+                        }                
+                    }
+                    PostTopLevelHSM(PostEvent);
+                    tapeTriggered = FALSE;      
                 }
             }
             break;
