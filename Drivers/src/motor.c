@@ -32,13 +32,13 @@ void motorInit()
 void pivotTurnRight()
 {
 	motorForward(LEFT);
-	motoStop(RIGHT);
+	motorStop(RIGHT);
 }
 
 void pivotTurnLeft()
 {
 	motorForward(RIGHT);
-	motoStop(LEFT);
+	motorStop(LEFT);
 }
 
 void tankTurnRight()
@@ -76,7 +76,7 @@ void stopMoving()
 void motorForward(int lr)
 {
 	// sets IN0 = 0, IN1 = 1
-	if (RIGHT) 
+	if (lr == RIGHT) 
 	{
         IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) | DIR_RIGHT_MOTOR); // Set Dir right motor = high (forward)
 	}
@@ -94,7 +94,7 @@ void motorForward(int lr)
 void motorBackward(int lr)
 {
 	// sets IN0 = 0, IN1 = 1
-	if (RIGHT) 
+	if (lr == RIGHT) 
 	{
 		IO_PortsWritePort(PORTY,IO_PortsReadPort(PORTY) & ~DIR_RIGHT_MOTOR); // Set Dir right motor = low (backward)
 	}
@@ -107,13 +107,13 @@ void motorBackward(int lr)
 
 void motorStop(int lr)
 {
-	if (RIGHT) 
+	if (lr == RIGHT) 
 	{
-		PWM_SetDutyCycle(0);
+		PWM_SetDutyCycle(PWM_RIGHT_MOTOR,0);
 	}
 	else
 	{
-		PWM_SetDutyCycle(0);
+		PWM_SetDutyCycle(PWM_LEFT_MOTOR,0);
 	}
 	return;
 }

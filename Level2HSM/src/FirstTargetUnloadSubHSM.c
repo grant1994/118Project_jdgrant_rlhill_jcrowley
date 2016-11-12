@@ -37,8 +37,8 @@ typedef enum {
 static const char *StateNames[] = {
 	"InitPState",
 	"PivotTurn",
-    "Forward",
-    "Unload",
+	"Forward",
+	"Unload",
 };
 
 
@@ -134,7 +134,7 @@ ES_Event RunFirstTargetUnloadSubHSM(ES_Event ThisEvent)
                 pivotTurnRight();
                 break;
             case TAPE_TRIGGERED:
-                if (((ThisEvent.EventParam & TS_FR) >> 1) && ((ThisEvent.EventParam & TS_FL) >> 2))
+                if (((ThisEvent.EventParam) >> 1) && ((ThisEvent.EventParam) >> 2))
                 {
                     nextState = Forward;
                     makeTransition = TRUE;
@@ -157,17 +157,17 @@ ES_Event RunFirstTargetUnloadSubHSM(ES_Event ThisEvent)
                 moveForward();
                 break;
             case TAPE_TRIGGERED:
-                if(!((ThisEvent.EventParam & TS_FR) >> 1))
+                if(!((ThisEvent.EventParam) >> 1))
                 {
                     nextState = Forward;
                     makeTransition = TRUE;
                 }
-                else if(!((ThisEvent.EventParam & TS_FL) >> 1))
+                else if(!((ThisEvent.EventParam) >> 1))
                 {
                     nextState = Forward;
                     makeTransition = TRUE;
                 }
-                else if((ThisEvent.EventParam & TS_FM) >> 1)
+                else if((ThisEvent.EventParam) >> 1)
                 {
                     nextState = Unload;
                     makeTransition = TRUE;

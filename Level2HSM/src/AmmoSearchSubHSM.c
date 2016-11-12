@@ -134,18 +134,11 @@ ES_Event RunAmmoSearchSubHSM(ES_Event ThisEvent)
         //state machine does
         //ThisEvent = RunAmmoSearchHSM(ThisEvent);
         switch (ThisEvent.EventType) {
-            case TS_FL_TRIGGERED:
+            // fl triggered then turn right, else if fr triggered turn left
+            case TAPE_TRIGGERED:
                 if (ThisEvent.EventParam)
                 {
                     turnParam = 1;
-                    nextState = Backward;
-                    makeTransition = TRUE;
-                }
-                break;
-            case TS_FR_TRIGGERED:
-                if (ThisEvent.EventParam)
-                {
-                    turnParam = 0;
                     nextState = Backward;
                     makeTransition = TRUE;
                 }

@@ -132,7 +132,7 @@ ES_Event RunAmmoLoadSubHSM(ES_Event ThisEvent)
                 break;
             case TW_TRIGGERED:
                 // This value assumes we are using only middle and back track wires, meaning both bits are set high
-                if (thisEvent.EventParam == 0x3)
+                if (ThisEvent.EventParam == 0x3)
                 {
                     nextState = Backward;
                     makeTransition = TRUE;
@@ -151,7 +151,7 @@ ES_Event RunAmmoLoadSubHSM(ES_Event ThisEvent)
                 break;
             case TW_TRIGGERED:
                 // This value assumes we are using only middle and back track wires, meaning both bits are set high
-                if (thisEvent.EventParam != 0x3)
+                if (ThisEvent.EventParam != 0x3)
                 {
                     nextState = TankTurn;
                     makeTransition = TRUE;
