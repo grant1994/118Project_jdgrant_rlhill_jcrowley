@@ -40,7 +40,7 @@
  * PUBLIC FUNCTIONS                                                            *
  ******************************************************************************/
 
-uint8_t TrackWireSignal(void) {
+uint8_t Track_Wire_Signal(void) {
     static ES_EventTyp_t PRESTATE = TRACK_WIRE_OFF;
     ES_EventTyp_t CURRENTTRACK;
     ES_Event thisEvent;
@@ -64,6 +64,36 @@ uint8_t TrackWireSignal(void) {
         thisEvent.EventParam = Whichtrack;
         returnREAD = TRUE;
         PRESTATE = CURRENTTRACK;
+       // PostGenericService(thisEvent);
+    }
+    return (returnREAD);
+
+}
+
+uint8_t Beacon_Signal(void) {
+    static ES_EventTyp_t PRESTATE = BEACON_OFF;
+    ES_EventTyp_t CURRENTBEACON;
+    ES_Event thisEvent;
+    uint8_t returnREAD = FALSE;
+ 
+    uint8_t Whichbeacon = readBeaconDetector();
+
+    if (Whichbeacon) {
+        CURRENTBEACON = BEACON_OFF;
+        LED_SetBank(LED_BANK3,0x0);
+        //printf("\r\ntrack wire is on");
+    } else {
+        
+        CURRENTBEACON = BEACON_ON;
+        //printf("\r\ntrack wire is off");
+        LED_SetBank(LED_BANK3,0xF);
+    }
+
+    if (CURRENTBEACON != PRESTATE) {
+        thisEvent.EventType = CURRENTBEACON;
+        thisEvent.EventParam = Whichbeacon;
+        returnREAD = TRUE;
+        PRESTATE = CURRENTBEACON;
        // PostGenericService(thisEvent);
     }
     return (returnREAD);

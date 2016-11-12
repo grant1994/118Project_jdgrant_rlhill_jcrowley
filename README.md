@@ -3,9 +3,9 @@ Repository for the UCSC 118 Project.
 
 # Team Members:
 
-Joseph Grant, email: jdgrant@ucsc.edu
-Randall Hill, email: rlhill@ucsc.edu
-Jeremy Crowley, email: jcrowley@ucsc.edu
+	Joseph Grant, email: jdgrant@ucsc.edu
+	Randall Hill, email: rlhill@ucsc.edu
+	Jeremy Crowley, email: jcrowley@ucsc.edu
 
 #Description
 
